@@ -1,0 +1,8 @@
+QuAlgLib (qubitera)
+Copyright 2026 Henry
+
+This repository aggregates quantum algorithm implementations from multiple upstream sources.
+Original authorship and license for each vendored algorithm is preserved in that algorithm's
+directory (see PROVENANCE.md alongside it) and summarized here as sources are added.
+
+No third-party code has been vendored yet. See docs/SOURCES.md for the sources under evaluation.
