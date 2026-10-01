@@ -1,0 +1,38 @@
+id: shors-algorithm
+name: "Shor's Algorithm"
+aliases:
+  - "Shor's factoring algorithm"
+category: algebraic-number-theoretic
+problem_class: "Integer factorization and discrete logarithm"
+problem_tags:
+  - factoring
+  - cryptanalysis
+  - hidden-subgroup-problem
+classical_complexity: "Sub-exponential (General Number Field Sieve)"
+quantum_complexity: "Polynomial, O((log N)^2 (log log N) (log log log N))"
+speedup: exponential
+qubits_required: "~2n + O(1) logical qubits for n-bit number (varies by circuit construction)"
+circuit_depth: "Polynomial in n; dominated by modular exponentiation"
+requires_fault_tolerance: true
+hardware_assumptions: "Not viable on NISQ for cryptographically relevant sizes; needs large-scale fault-tolerant hardware"
+maturity: textbook
+implementations:
+  - language: python
+    framework: qiskit
+    path: algorithms/algebraic-number-theoretic/shors-algorithm/qiskit_impl.py
+    status: demonstrated-small-scale
+source:
+  repo: Qiskit/qiskit
+  url: https://github.com/Qiskit/qiskit
+  commit: "<pin-on-vendor>"
+  license: Apache-2.0
+known_limitations:
+  - "Textbook modular exponentiation circuit is not resource-optimal; several published constructions reduce qubit count/depth"
+  - "Order-finding subroutine assumes exact QFT; approximate QFT variants may trade accuracy for depth"
+improvement_opportunities:
+  - "Swap in a windowed/approximate QFT to reduce circuit depth for near-term demonstrations"
+  - "Evaluate space-efficient modular exponentiation constructions (e.g. Zalka, Gidney) for lower qubit counts"
+benchmarks: []
+references:
+  - "Shor, P. (1997). Polynomial-Time Algorithms for Prime Factorization and Discrete Logarithms on a Quantum Computer. SIAM J. Comput."
+last_reviewed: "2026-10-01"

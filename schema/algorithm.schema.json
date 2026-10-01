@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qubitera.dev/schema/algorithm.schema.json",
+  "title": "QuAlgLib Algorithm Metadata",
+  "type": "object",
+  "required": [
+    "id", "name", "category", "problem_class", "problem_tags",
+    "quantum_complexity", "speedup", "maturity", "source", "last_reviewed"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+    "name": { "type": "string" },
+    "aliases": { "type": "array", "items": { "type": "string" } },
+    "category": { "type": "string" },
+    "problem_class": { "type": "string" },
+    "problem_tags": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "classical_complexity": { "type": "string" },
+    "quantum_complexity": { "type": "string" },
+    "speedup": {
+      "type": "string",
+      "enum": ["exponential", "superpolynomial", "polynomial", "quadratic", "heuristic", "none-proven"]
+    },
+    "qubits_required": { "type": "string" },
+    "circuit_depth": { "type": "string" },
+    "requires_fault_tolerance": { "type": "boolean" },
+    "hardware_assumptions": { "type": "string" },
+    "maturity": {
+      "type": "string",
+      "enum": ["textbook", "demonstrated", "research", "experimental"]
+    },
+    "implementations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["language", "framework", "path", "status"],
+        "properties": {
+          "language": { "type": "string" },
+          "framework": { "type": "string" },
+          "path": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["repo", "url", "license"],
+      "properties": {
+        "repo": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "commit": { "type": "string" },
+        "license": { "type": "string" }
+      }
+    },
+    "known_limitations": { "type": "array", "items": { "type": "string" } },
+    "improvement_opportunities": { "type": "array", "items": { "type": "string" } },
+    "benchmarks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "metric": { "type": "string" },
+          "value": {},
+          "hardware": { "type": "string" },
+          "date": { "type": "string", "format": "date" }
+        }
+      }
+    },
+    "references": { "type": "array", "items": { "type": "string" } },
+    "last_reviewed": { "type": "string", "format": "date" }
+  },
+  "additionalProperties": false
+}
