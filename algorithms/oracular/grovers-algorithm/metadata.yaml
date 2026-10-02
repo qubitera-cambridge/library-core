@@ -38,11 +38,15 @@ improvement_opportunities:
   - "Decompose the multi-controlled-Z with a more hardware-efficient construction (e.g. relative-phase Toffoli chains) for better NISQ performance at larger n"
 benchmarks:
   - metric: success_rate
-    value: "100% (n=3, 2 marked of 8, 1 iteration, AerSimulator, 2000 shots)"
+    value: 1.0
+    unit: fraction
+    conditions: "n=3, 2 marked of 8, 1 Grover iteration, 2000 shots"
     hardware: "AerSimulator (noiseless)"
     date: "2026-10-02"
   - metric: success_rate
-    value: "95-100% across n=3..5 at optimal iteration counts"
+    value: 0.95
+    unit: fraction
+    conditions: "worst observed case across n=3..5 at optimal iteration counts (range was 95-100%)"
     hardware: "AerSimulator (noiseless)"
     date: "2026-10-02"
 references:

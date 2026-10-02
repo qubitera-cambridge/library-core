@@ -94,6 +94,7 @@ def test_full_circuit_amplifies_marked_states(num_qubits, marked_states, min_suc
     assert success_probability >= min_success_probability
 
 
+@pytest.mark.slow
 def test_measurement_smoke_test_with_seeded_simulator():
     """One seeded, sampled end-to-end check covering the measurement/backend path
     that the exact-statevector tests above don't exercise."""

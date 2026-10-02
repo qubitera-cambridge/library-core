@@ -27,7 +27,7 @@ candidates for a problem, before reading any actual code. JSON Schema for valida
 | `source` | object | `{repo, url, commit, license}` — provenance of the original code this was copied from |
 | `known_limitations` | list[string] | Known weaknesses, failure modes, or caveats |
 | `improvement_opportunities` | list[string] | Open ideas for optimization — this is the field an "improve this algorithm" agent reads/writes to |
-| `benchmarks` | list[object] | Optional: `{metric, value, hardware, date}` |
+| `benchmarks` | list[object] | `{metric, value, date}` required per entry; `value` must be numeric (not prose) so it can eventually be machine-checked against a test run — put human-readable experimental conditions in the optional `conditions` field instead, plus optional `unit`, `hardware` |
 | `references` | list[string] | Paper links / DOIs |
 | `last_reviewed` | date | When metadata was last verified against the code |
 

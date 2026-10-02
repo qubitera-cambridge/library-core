@@ -10,6 +10,7 @@ which only need to run for directories that changed.
 """
 
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
 import jsonschema
@@ -19,6 +20,7 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = REPO_ROOT / "schema" / "algorithm.schema.json"
 ALGORITHMS_DIR = REPO_ROOT / "algorithms"
+STALE_AFTER_DAYS = 365
 
 
 def _algorithm_dirs():
@@ -29,6 +31,17 @@ def _algorithm_dirs():
     )
 
 
+def _all_leaf_directories():
+    """Every algorithms/<category>/<algo>/ directory that exists on disk, found
+    by walking the filesystem rather than by globbing for metadata.yaml. Used to
+    catch a directory whose metadata.yaml was deleted (e.g. by a pure-deletion
+    commit) — such a directory is invisible to _algorithm_dirs() above and would
+    otherwise silently drop out of every structural check."""
+    if not ALGORITHMS_DIR.exists():
+        return []
+    return sorted(p for p in ALGORITHMS_DIR.glob("*/*") if p.is_dir())
+
+
 @pytest.fixture(scope="module")
 def schema():
     with open(SCHEMA_PATH) as f:
@@ -36,6 +49,7 @@ def schema():
 
 
 ALGO_DIRS = _algorithm_dirs()
+ALL_LEAF_DIRS = _all_leaf_directories()
 
 
 @pytest.mark.parametrize("algo_dir", ALGO_DIRS, ids=lambda p: str(p.relative_to(REPO_ROOT)))
@@ -71,6 +85,28 @@ def test_implementation_paths_exist(algo_dir):
     for impl in data.get("implementations", []):
         impl_path = REPO_ROOT / impl["path"]
         assert impl_path.exists(), f"metadata.yaml references missing file: {impl['path']}"
+
+
+@pytest.mark.parametrize("algo_dir", ALGO_DIRS, ids=lambda p: str(p.relative_to(REPO_ROOT)))
+def test_last_reviewed_not_stale(algo_dir):
+    with open(algo_dir / "metadata.yaml") as f:
+        data = yaml.safe_load(f)
+    reviewed = data["last_reviewed"]
+    if not isinstance(reviewed, date):
+        reviewed = date.fromisoformat(str(reviewed))
+    age = date.today() - reviewed
+    assert age <= timedelta(days=STALE_AFTER_DAYS), (
+        f"{algo_dir}: last_reviewed is {age.days} days old (> {STALE_AFTER_DAYS}); "
+        "re-verify the implementation/benchmarks and bump last_reviewed"
+    )
+
+
+@pytest.mark.parametrize("leaf_dir", ALL_LEAF_DIRS, ids=lambda p: str(p.relative_to(REPO_ROOT)))
+def test_every_algorithm_directory_has_metadata(leaf_dir):
+    assert (leaf_dir / "metadata.yaml").exists(), (
+        f"{leaf_dir} has no metadata.yaml — orphaned algorithm directory "
+        "(did a metadata.yaml get deleted without removing the directory?)"
+    )
 
 
 def test_at_least_one_algorithm_is_registered():

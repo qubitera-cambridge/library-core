@@ -4,7 +4,14 @@ jsonschema>=4
 pre-commit>=3
 
 # Framework-specific deps accumulate here as algorithms are added across
-# different SDKs; keep them optional/grouped if this grows (e.g. split into
-# requirements-qiskit.txt, requirements-cirq.txt) once it's unwieldy.
+# different SDKs. DEFERRED DECISION, not yet resolved (see docs/testing.md
+# "Known gaps"): this flat file forces every contributor/CI run to install
+# every SDK's full dependency closure, with no fallback if two ever hard-
+# conflict. Confirmed concretely during the 2026-10-02 testing architecture
+# review: Classiq's PyPI releases cap `Requires-Python <3.14`, so a flat
+# install alongside a newer-Python-only dependency would already break.
+# Resolve this — split into per-framework extras/groups (`.[qiskit]`,
+# `.[cirq]`, `.[classiq]`) with their own lock files, each tested in its own
+# CI matrix job — BEFORE adding the first non-Qiskit algorithm, not after.
 qiskit>=2
 qiskit-aer>=0.15

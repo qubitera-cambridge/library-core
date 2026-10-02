@@ -11,7 +11,7 @@
     "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
     "name": { "type": "string" },
     "aliases": { "type": "array", "items": { "type": "string" } },
-    "category": { "type": "string" },
+    "category": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
     "problem_class": { "type": "string" },
     "problem_tags": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
     "classical_complexity": { "type": "string" },
@@ -57,9 +57,12 @@
       "type": "array",
       "items": {
         "type": "object",
+        "required": ["metric", "value", "date"],
         "properties": {
           "metric": { "type": "string" },
-          "value": {},
+          "value": { "type": "number" },
+          "unit": { "type": "string" },
+          "conditions": { "type": "string" },
           "hardware": { "type": "string" },
           "date": { "type": "string", "format": "date" }
         }

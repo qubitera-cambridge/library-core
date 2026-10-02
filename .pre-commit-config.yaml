@@ -7,3 +7,12 @@ repos:
         language: script
         pass_filenames: true
         files: ^(algorithms/|schema/|tests/)
+        # Without this, pre-commit's staged-file matcher excludes pure deletions
+        # from the files a `files:` regex hook ever sees — so deleting e.g. an
+        # algorithm's metadata.yaml or test file, with nothing else staged, would
+        # skip this hook entirely and commit clean with zero verification.
+        # always_run forces tests/test_repo_structure.py (run unconditionally as
+        # the script's first line) to actually run on every commit, matching
+        # docs/testing.md's claim that it "always runs, regardless of what
+        # changed." Verified during the testing architecture review (2026-10-02).
+        always_run: true
