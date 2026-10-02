@@ -9,6 +9,17 @@ Nothing gets copied in without a license check landing here first.
 | Classiq Library | https://github.com/Classiq/classiq-library | Apache-2.0 (notebooks) | Many notebooks require the proprietary `classiq` SDK/backend to actually synthesize circuits — check portability per-notebook before vendoring | Not yet vendored |
 | DeltaKit | https://github.com/Deltakit | Apache-2.0 (verify per-repo) | QEC / decoder tooling, not really "algorithms" in the Shor/Grover sense — scope fit questionable | Under review |
 | Quantum Algorithm Zoo | https://quantumalgorithmzoo.org/ | N/A (curated list, not code) | Use only as a taxonomy/index of algorithms + paper citations, not a code source | Reference only |
+| lambeq | https://github.com/quantinuum/lambeq | Apache-2.0 | QNLP framework (DisCoCat-based circuit construction + training), not a named algorithm with a proven speedup — doesn't fit the current complexity-class taxonomy or the exact-statevector testing pattern. Needs a new category (e.g. `quantum-nlp`) and different metadata/testing semantics (`speedup: heuristic`, accuracy-within-tolerance tests) before vendoring | Future interest — scope TBD |
+
+## Future interest / scope-pending
+
+Sources worth revisiting once a specific open design question is settled, listed here instead of
+jumping straight into the per-source vendoring process above.
+
+- **lambeq** (Quantinuum) — pending a decision on whether QuAlgLib's scope extends to
+  heuristic/variational frameworks without a proven complexity-theoretic speedup, and if so, what
+  category + testing pattern they'd use (see `docs/testing.md` for the current exact-statevector
+  approach, which assumes deterministic, reversible circuits).
 
 ## Process for adding a source
 
