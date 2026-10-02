@@ -5,7 +5,7 @@ Nothing gets copied in without a license check landing here first.
 
 | Source | URL | License | Notes | Status |
 |---|---|---|---|---|
-| Qiskit | https://github.com/Qiskit/qiskit | Apache-2.0 | Core SDK; algorithm textbook/tutorials live in separate repos (qiskit-community-tutorials, etc.) | Not yet vendored |
+| Qiskit | https://github.com/Qiskit/qiskit | Apache-2.0 | Core SDK; algorithm textbook/tutorials live in separate repos (qiskit-community-tutorials, etc.) | Grover's algorithm vendored (pattern-level, see `algorithms/oracular/grovers-algorithm/PROVENANCE.md`) |
 | Classiq Library | https://github.com/Classiq/classiq-library | Apache-2.0 (notebooks) | Many notebooks require the proprietary `classiq` SDK/backend to actually synthesize circuits — check portability per-notebook before vendoring | Not yet vendored |
 | DeltaKit | https://github.com/Deltakit | Apache-2.0 (verify per-repo) | QEC / decoder tooling, not really "algorithms" in the Shor/Grover sense — scope fit questionable | Under review |
 | Quantum Algorithm Zoo | https://quantumalgorithmzoo.org/ | N/A (curated list, not code) | Use only as a taxonomy/index of algorithms + paper citations, not a code source | Reference only |
