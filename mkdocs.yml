@@ -1,0 +1,16 @@
+site_name: QuAlgLib
+site_description: A browsable index of quantum algorithms, generated from the repository's own metadata
+docs_dir: website/build
+site_dir: website/site
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+  features:
+    - navigation.indexes
+    - search.suggest
+
+markdown_extensions:
+  - tables

@@ -8,3 +8,6 @@ venv/
 *.egg-info/
 dist/
 build/
+website/build/
+website/site/
+website/demo_cache/

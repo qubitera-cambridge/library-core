@@ -43,3 +43,9 @@ colocated test suite — see `docs/testing.md` for the testing architecture and
 `docs/metadata-schema.md` for the metadata fields. See `docs/SOURCES.md` for the upstream repos
 under evaluation for future vendoring, and `docs/FUTURE_INTEREST.md` for open ideas not yet ready
 for that process.
+
+## Documentation site
+
+A browsable site (explanations, metadata, and live demo output) is generated directly from each
+algorithm's files — see `docs/site-generation.md` for how it works and
+`tox -e qiskit-docs && tox -e docs` to build it locally.

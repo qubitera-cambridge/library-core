@@ -32,6 +32,7 @@ _spec.loader.exec_module(_qiskit_impl)
 build_grover_circuit = _qiskit_impl.build_grover_circuit
 build_oracle = _qiskit_impl.build_oracle
 optimal_iterations = _qiskit_impl.optimal_iterations
+demo = _qiskit_impl.demo
 
 
 @pytest.mark.parametrize(
@@ -98,6 +99,20 @@ def test_full_circuit_amplifies_marked_states(num_qubits, marked_states, min_suc
     probs = sv.probabilities_dict()
     success_probability = sum(p for state, p in probs.items() if state in marked_states)
     assert success_probability >= min_success_probability
+
+
+def test_demo_returns_expected_shape():
+    """demo() isn't exercised by any other test here, but it's what the
+    documentation site actually runs and renders — see docs/site-generation.md.
+    Nothing else would catch demo() silently breaking (e.g. a renamed function
+    it calls) without this."""
+    result = demo()
+    assert isinstance(result["description"], str) and result["description"]
+    assert isinstance(result["parameters"], dict)
+    assert isinstance(result["result"], dict)
+    assert "counts" in result["result"]
+    assert sum(result["result"]["counts"].values()) == result["parameters"]["shots"]
+    assert 0.0 <= result["result"]["success_rate"] <= 1.0
 
 
 @pytest.mark.slow

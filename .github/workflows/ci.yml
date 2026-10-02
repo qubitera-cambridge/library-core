@@ -27,3 +27,17 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: pip install tox
       - run: tox -e ${{ matrix.env }}
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install tox
+      # No cache here (unlike the local pre-commit hook) — a clean checkout has
+      # no prior demo_cache to scope against, so this always does a full
+      # regeneration. Add a <framework>-docs step for each SDK as it's added.
+      - run: tox -e qiskit-docs
+      - run: tox -e docs

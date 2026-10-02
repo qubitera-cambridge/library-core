@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 """Pre-commit hook entrypoint.
 
-Always runs the cheap repo structure/schema check, then routes per-algorithm
-tests to the tox environment matching each changed algorithm's framework(s)
-(metadata.yaml's implementations[].framework) — so no contributor or CI job
-ever needs every quantum SDK installed in one shared environment, and a
-missing framework in one algorithm can't block a commit touching another.
+Always runs the cheap repo structure/schema check, then for each changed
+algorithm directory, routed by framework (metadata.yaml's
+implementations[].framework) so no contributor or CI job ever needs every
+quantum SDK installed in one shared environment:
+
+  1. Runs that framework's tests, scoped to just the changed directories.
+  2. Regenerates just those directories' demo() cache entries (Stage 1 of the
+     docs site build — see docs/site-generation.md). website/demo_cache/ is
+     gitignored but persists on disk across commits, so this only recomputes
+     what actually changed rather than every algorithm's demo every time.
+
+Finally, if everything above succeeded, re-renders and rebuilds the full docs
+site (Stage 2 — framework-agnostic, needs no quantum SDK, cheap pure
+templating) so a commit can never land with a broken template or a site that
+fails to build.
 
 Rewritten from a bash script into Python after an adversarial review found
 three separate bash-specific bugs here (unquoted word-splitting, set -e
@@ -52,7 +62,7 @@ def main(argv):
 
     dirs = changed_algorithm_dirs(argv)
     if not dirs:
-        print("No algorithm directories changed; skipping per-algorithm tests.", flush=True)
+        print("No algorithm directories changed; skipping per-algorithm tests and docs.", flush=True)
         return 0
 
     dirs_by_framework = defaultdict(list)
@@ -79,17 +89,30 @@ def main(argv):
     overall_rc = 0
     for framework, rel_dirs in sorted(dirs_by_framework.items()):
         print(f"Running '{framework}' tests for: {', '.join(rel_dirs)}", flush=True)
-        result = subprocess.run(
+        test_result = subprocess.run(
             ["tox", "-e", framework, "--", *rel_dirs, "-q"], cwd=REPO_ROOT
         )
-        rc = result.returncode
+        rc = test_result.returncode
         if rc == 5:
             # "no tests collected" — expected when metadata/impl are staged
             # before the test file exists yet (e.g. a new algorithm landing
             # across a couple of commits). Don't hard-block the commit for it.
             print(f"warning: no tests found yet for the changed '{framework}' director(y/ies) above")
             rc = 0
-        overall_rc = overall_rc or rc
+        if rc != 0:
+            overall_rc = overall_rc or rc
+            continue  # don't bother regenerating docs for a framework whose tests just failed
+
+        print(f"Regenerating '{framework}' demo cache for: {', '.join(rel_dirs)}", flush=True)
+        demo_result = subprocess.run(
+            ["tox", "-e", f"{framework}-docs", "--", *rel_dirs], cwd=REPO_ROOT
+        )
+        overall_rc = overall_rc or demo_result.returncode
+
+    if overall_rc == 0:
+        print("Rendering documentation site...", flush=True)
+        site_result = subprocess.run(["tox", "-e", "docs"], cwd=REPO_ROOT)
+        overall_rc = overall_rc or site_result.returncode
 
     return overall_rc
 

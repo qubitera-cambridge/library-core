@@ -55,21 +55,50 @@ def build_grover_circuit(num_qubits: int, marked_states: list[str]) -> QuantumCi
     return qc
 
 
-if __name__ == "__main__":
+def demo() -> dict:
+    """One concrete, reproducible run of this algorithm, for the documentation
+    site to render — not a test. Returns a JSON-serializable dict:
+      - description: str, one-line summary of what this run demonstrates
+      - parameters: dict of the inputs used
+      - result: dict of the outputs
+
+    See docs/site-generation.md for the convention this follows.
+    """
     from qiskit_aer import AerSimulator
 
     num_qubits = 3
-    marked_states = ["011", "100"]  # example: two marked states out of 8
+    marked_states = ["011", "100"]
+    shots = 2000
+    seed = 42
+    iterations = optimal_iterations(num_qubits, len(marked_states))
 
     circuit = build_grover_circuit(num_qubits, marked_states).decompose(reps=5)
-
-    sim = AerSimulator()
-    result = sim.run(circuit, shots=2000).result()
-    counts = result.get_counts()
-
-    print(f"Marked states: {marked_states}")
-    print(f"Optimal iterations: {optimal_iterations(num_qubits, len(marked_states))}")
-    print("Measurement counts:", counts)
-
+    sim = AerSimulator(seed_simulator=seed)
+    counts = sim.run(circuit, shots=shots, seed_simulator=seed).result().get_counts()
     hits = sum(c for state, c in counts.items() if state in marked_states)
-    print(f"Success rate: {hits / 2000:.2%}")
+
+    return {
+        "description": (
+            f"Searching {2**num_qubits} items for {len(marked_states)} marked "
+            f"state(s) using {iterations} Grover iteration(s)"
+        ),
+        "parameters": {
+            "num_qubits": num_qubits,
+            "marked_states": marked_states,
+            "iterations": iterations,
+            "shots": shots,
+            "seed": seed,
+        },
+        "result": {
+            "counts": dict(counts),
+            "success_rate": hits / shots,
+        },
+    }
+
+
+if __name__ == "__main__":
+    result = demo()
+    print(result["description"])
+    print("Parameters:", result["parameters"])
+    print("Measurement counts:", result["result"]["counts"])
+    print(f"Success rate: {result['result']['success_rate']:.2%}")

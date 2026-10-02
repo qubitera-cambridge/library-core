@@ -1,0 +1,15 @@
+# QuAlgLib
+
+A browsable index of the quantum algorithms in QuAlgLib — explanations, metadata, and live demo
+output generated directly from the repository, not hand-maintained separately. See the
+repository's `docs/SOURCES.md` for provenance and `docs/testing.md` for how correctness is
+verified.
+
+{% for category, algos in categories.items() | sort %}
+## {{ category }}
+
+{% for algo in algos | sort(attribute="name") -%}
+- [{{ algo.name }}]({{ algo.category }}/{{ algo.id }}.md) — {{ algo.problem_class }}
+{% endfor %}
+
+{% endfor %}

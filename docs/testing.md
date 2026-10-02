@@ -118,6 +118,8 @@ the original version), which:
    resolves each to its framework(s) via `metadata.yaml`, and routes to the matching `tox -e
    <framework>` — not the full simulator-backed suite across every framework — so commits stay
    fast as the collection grows into the hundreds or thousands of algorithms across multiple SDKs.
+3. Regenerates the documentation site, scoped and cached the same way — see
+   `docs/site-generation.md`'s "Wired into the pre-commit hook" for the details.
 
 Setup:
 
@@ -145,8 +147,10 @@ with zero verification under this fallback.
 ## CI
 
 `.github/workflows/ci.yml` runs a matrix job, one per tox environment/framework (`tox -e qiskit`,
-`tox -e cirq`, ...), on every push and pull request — so a dependency problem in one framework
-can't fail CI for algorithms in another. **The local pre-commit hook is a fast first line of
+`tox -e cirq`, ...), plus a separate `docs` job that does a full (uncached) regeneration and build
+of the documentation site, on every push and pull request — so a dependency problem in one
+framework can't fail CI for algorithms in another, and a broken template or demo can't land even
+if the pre-commit hook was bypassed. **The local pre-commit hook is a fast first line of
 defense, not the enforcement mechanism** — it's opt-in per clone (nothing runs it until someone
 runs `pre-commit install`), and `git commit --no-verify` bypasses it trivially. CI is what actually
 guarantees a merged change was checked. Once this repo has a remote with multiple contributors,
