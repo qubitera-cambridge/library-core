@@ -1,0 +1,8 @@
+# PRIVATE DEPENDENCY — requires Git access to qubitera-cambridge's private
+# repositories (SSH key or an authenticated HTTPS credential helper). Not
+# installed by library-core's default public CI. See
+# docs/private-dependencies.md.
+df-vqls @ git+ssh://git@github.com/qubitera-cambridge/df-vqls-core.git@3e16e9e7ecd6f114cb9293a90dabee06606ed0f7
+qiskit>=2
+numpy>=1.26
+scipy>=1.11

@@ -168,9 +168,12 @@ reversible circuit with a single final measurement). It does not yet have an ans
 - **Non-deterministic / statistical correctness** (VQE, QAOA, anything judged by an approximation
   ratio or convergence within tolerance rather than an exact target state). The
   exact-statevector-first principle above assumes there *is* one deterministic target — these
-  algorithms don't have that, and what the shot-based test pattern should look like for them
-  (sizing shots/tolerance, picking a known-answer small instance to validate against) hasn't been
-  worked out.
+  algorithms don't have that. `linear-algebra/df-vqls-solver/test_qiskit_impl.py` has a first,
+  ad hoc example of a pattern for this class (compare the converged *direction* via cosine
+  similarity rather than exact values, since the method only recovers a solution up to scale, and
+  assert on the optimizer's own convergence flags — `target_met`, `function_evaluations` — not
+  just the final answer). That's one data point, not yet a documented general convention; a
+  second algorithm in this class should turn it into one.
 - **Mid-circuit measurement with classical feedback** (teleportation, iterative phase estimation,
   quantum error correction). `Statevector(circuit).evolve(...)` only works for unitary-only
   circuits — there's no established pattern here yet for testing a circuit whose later gates

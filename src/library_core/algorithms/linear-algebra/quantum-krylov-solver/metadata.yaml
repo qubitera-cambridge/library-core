@@ -1,0 +1,55 @@
+id: quantum-krylov-solver
+name: "Quantum Krylov Subspace Linear Solver"
+aliases:
+  - "Quantum Krylov method"
+category: linear-algebra
+problem_class: "Solve a linear system Ax = b by building a Krylov subspace with a quantum-estimated basis and solving the small projected system classically"
+problem_tags:
+  - linear-systems
+  - krylov-subspace
+  - hamiltonian-simulation
+  - quantum-linear-algebra
+classical_complexity: "O(n^3) for direct solve, or O(n^2) per Krylov iteration classically"
+quantum_complexity: "Polynomial in system size for basis estimation via density matrix exponentiation; dominant cost is the number of Hadamard-test-style overlap estimations"
+speedup: heuristic
+qubits_required: "Depends on the encoding of A, b; the demo here uses a 2x2 dense system requiring only a few qubits for state preparation plus the Hadamard-test ancilla"
+circuit_depth: "Depends on basis/implementation choice; real_time basis depth scales with the number of Krylov dimensions requested"
+requires_fault_tolerance: false
+hardware_assumptions: "NISQ-viable for small systems/low Krylov dimension; accuracy vs. circuit depth is the central tradeoff, same as other near-term variational/subspace methods"
+maturity: research
+implementations:
+  - language: python
+    framework: qiskit
+    path: qiskit_impl.py
+    status: verified-simulator
+source:
+  repo: qubitera-cambridge/quantum-krylov-core
+  url: https://github.com/qubitera-cambridge/quantum-krylov-core
+  commit: "3939f4a1d61f65cfe2f59a98f1c73552d0a2ea1a"
+  license: "see quantum-krylov-core's own LICENSE (private repo)"
+external_dependencies:
+  - package: quantum-krylov
+    url: https://github.com/qubitera-cambridge/quantum-krylov-core
+    access: private
+    note: "Sibling qubitera-cambridge project, not third-party code. Requires Git access to this private repo to install — see requirements-krylov.txt and docs/private-dependencies.md. Not installed in library-core's default public CI."
+known_limitations:
+  - "This wrapper demonstrates only the real_time basis at a small dimension on a 2x2 system; the underlying package supports many more basis/implementation/reduced_solver combinations (chebyshev, lanczos, polynomial, QSP, DF-VQLS as a reduced solver) not exercised here"
+  - "Real_time basis at low dimension has real approximation error (confirmed ~7% relative error on the demo system) - this is reported honestly, not hidden"
+  - "Not run against real quantum hardware; AerSimulator / exact statevector only"
+improvement_opportunities:
+  - "Expose more of the underlying package's basis/reduced_solver options as demo() parameters rather than one fixed configuration"
+  - "Add a worked example using DF-VQLS as the reduced solver, directly exercising the documented relationship between this algorithm and df-vqls-solver"
+  - "Benchmark relative error vs. Krylov dimension on a slightly larger system to show the convergence behavior, similar to trotterized-tfim's step-count convergence test"
+algorithm_dependencies:
+  - hadamard-test
+benchmarks:
+  - metric: relative_error
+    value: 0.0706
+    unit: fraction
+    conditions: "2x2 system, real_time basis, dimension=2, quantum implementation"
+    hardware: "exact statevector (no simulator noise)"
+    date: "2026-10-02"
+references:
+  - "Motta et al. (2020). Determining eigenstates and thermal states on a quantum computer using quantum imaginary time evolution. Nature Physics."
+  - "See quantum-krylov-core's own README/docstrings for the full method taxonomy (DME, measured Krylov, QSP-based reduced solve)."
+last_reviewed: "2026-10-02"

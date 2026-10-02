@@ -1,0 +1,55 @@
+id: df-vqls-solver
+name: "Decomposition-Free Variational Quantum Linear Solver (DF-VQLS)"
+aliases:
+  - "DF-VQLS"
+category: linear-algebra
+problem_class: "Solve a linear system Ax = b variationally, without decomposing A into a linear combination of unitaries"
+problem_tags:
+  - linear-systems
+  - vqls
+  - variational
+  - quantum-linear-algebra
+classical_complexity: "O(n^3) for direct solve"
+quantum_complexity: "Heuristic - depends on ansatz depth and optimizer convergence; no proven asymptotic speedup"
+speedup: heuristic
+qubits_required: "2 * ceil(log2(n)) qubits for an n-dimensional system (vectorized matrix encoding doubles the register)"
+circuit_depth: "Depends on the chosen ansatz (hardware-efficient by default) and its layer count"
+requires_fault_tolerance: false
+hardware_assumptions: "NISQ-viable by design - this is explicitly a near-term variational method"
+maturity: research
+implementations:
+  - language: python
+    framework: qiskit
+    path: qiskit_impl.py
+    status: verified-simulator
+source:
+  repo: qubitera-cambridge/df-vqls-core
+  url: https://github.com/qubitera-cambridge/df-vqls-core
+  commit: "3e16e9e7ecd6f114cb9293a90dabee06606ed0f7"
+  license: "see df-vqls-core's own LICENSE (private repo)"
+external_dependencies:
+  - package: df-vqls
+    url: https://github.com/qubitera-cambridge/df-vqls-core
+    access: private
+    note: "Sibling qubitera-cambridge project, not third-party code. Requires Git access to this private repo to install — see requirements-dfvqls.txt and docs/private-dependencies.md. Not installed in library-core's default public CI."
+known_limitations:
+  - "Recovers the solution direction, not necessarily matching scale/sign - demo() correctly compares via cosine similarity, not value equality"
+  - "Variational optimization can fail to converge or converge to a local minimum for harder (less diagonal-dominant, larger) systems than this wrapper's small demo"
+  - "Not run against real quantum hardware; the ClassicalBackend (shot-free statevector) path is used by this wrapper's demo for fast, deterministic convergence, not the shot-based QuantumBackend"
+improvement_opportunities:
+  - "Add a demo variant using the shot-based QuantumBackend to show realistic sampling noise effects on convergence"
+  - "Add a worked example of quantum-krylov-solver using this as its reduced solver (`reduced_solver='df_vqls'`), directly exercising their documented relationship"
+  - "Expose cost_type ('global' vs 'local') and overlap_method as demo() parameters to show the accuracy/cost tradeoff the package documents"
+algorithm_dependencies:
+  - hadamard-test
+benchmarks:
+  - metric: cosine_similarity
+    value: 1.0
+    unit: fraction
+    conditions: "2x2 diagonal system, joint_conditional cost estimator, 22 function evaluations"
+    hardware: "ClassicalBackend (shot-free statevector)"
+    date: "2026-10-02"
+references:
+  - "Patil et al. (2022). Variational quantum linear solver. Quantum."
+  - "See df-vqls-core's own README/docstrings for the full cost-function and overlap-estimation method taxonomy."
+last_reviewed: "2026-10-02"

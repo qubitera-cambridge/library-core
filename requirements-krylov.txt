@@ -1,0 +1,8 @@
+# PRIVATE DEPENDENCY — requires Git access to qubitera-cambridge's private
+# repositories (SSH key or an authenticated HTTPS credential helper). Not
+# installed by library-core's default public CI. See
+# docs/private-dependencies.md.
+quantum-krylov @ git+ssh://git@github.com/qubitera-cambridge/quantum-krylov-core.git@3939f4a1d61f65cfe2f59a98f1c73552d0a2ea1a
+qiskit>=2
+qiskit-aer>=0.15
+numpy>=1.26

@@ -74,6 +74,21 @@ def test_metadata_category_matches_parent_directory(algo_dir):
 
 
 @pytest.mark.parametrize("algo_dir", ALGO_DIRS, ids=lambda p: str(p.relative_to(REPO_ROOT)))
+def test_algorithm_dependencies_reference_real_catalogue_entries(algo_dir):
+    """The 'checker' for algorithm_dependencies: a declared dependency on
+    another library-core algorithm must actually exist in the catalogue, not
+    just be a typo or a stale reference to something renamed/removed."""
+    with open(algo_dir / "metadata.yaml") as f:
+        data = yaml.safe_load(f)
+    known_ids = {d.name for d in ALGO_DIRS}
+    for dep_id in data.get("algorithm_dependencies", []):
+        assert dep_id in known_ids, (
+            f"{algo_dir}: algorithm_dependencies references unknown id '{dep_id}' "
+            f"(known ids: {sorted(known_ids)})"
+        )
+
+
+@pytest.mark.parametrize("algo_dir", ALGO_DIRS, ids=lambda p: str(p.relative_to(REPO_ROOT)))
 def test_provenance_file_exists(algo_dir):
     assert (algo_dir / "PROVENANCE.md").exists(), f"Missing PROVENANCE.md in {algo_dir}"
 

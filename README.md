@@ -25,12 +25,15 @@ whatever Delphi-specific machinery might come later.
 
 ```
 src/library_core/
-  __init__.py, catalogue.py     # Public API: list_algorithms(), load_implementation(), run_demo(), ...
+  __init__.py, catalogue.py     # Public API: list_algorithms(), get_explanation(),
+                                 #   get_provenance(), load_implementation(), run_demo()
   algorithms/
     algebraic-number-theoretic/   # Shor's, hidden subgroup problem, discrete log, ...
     oracular/                     # Grover's, Deutsch-Jozsa, Simon's, ...
     optimization-approximation/   # QAOA, VQE, ...
     simulation/                   # Hamiltonian simulation, ...
+    subroutines/                  # Hadamard test, ... — primitives other algorithms build on
+    linear-algebra/                 # Quantum Krylov, DF-VQLS, ...
     ...
 docs/
   SOURCES.md                    # Ledger of upstream repos considered and their license status
@@ -61,14 +64,23 @@ See `src/library_core/catalogue.py` for the full API (`list_algorithms`, `get_al
 
 ## Status
 
-Three algorithms vendored so far, all pattern-level reimplementations from Qiskit:
+Six algorithms so far:
 
-- `src/library_core/algorithms/oracular/grovers-algorithm/` — Grover's search
-- `src/library_core/algorithms/algebraic-number-theoretic/quantum-phase-estimation/` — Quantum Phase Estimation
-- `src/library_core/algorithms/simulation/trotterized-tfim/` — Trotterized Hamiltonian simulation (TFIM)
+- `oracular/grovers-algorithm/` — Grover's search (pattern-level reimplementation from Qiskit)
+- `algebraic-number-theoretic/quantum-phase-estimation/` — Quantum Phase Estimation (from Qiskit)
+- `simulation/trotterized-tfim/` — Trotterized Hamiltonian simulation (from Qiskit)
+- `subroutines/hadamard-test/` — the Hadamard test overlap-estimation primitive (from Qiskit)
+- `linear-algebra/quantum-krylov-solver/` — thin wrapper around the sibling private repo
+  [`quantum-krylov-core`](https://github.com/qubitera-cambridge/quantum-krylov-core)
+- `linear-algebra/df-vqls-solver/` — thin wrapper around the sibling private repo
+  [`df-vqls-core`](https://github.com/qubitera-cambridge/df-vqls-core)
 
 Each has a `metadata.yaml` (schema at `schema/algorithm.schema.json`), a `PROVENANCE.md`, and a
 colocated test suite — see `docs/testing.md` for the testing architecture and
-`docs/metadata-schema.md` for the metadata fields. See `docs/SOURCES.md` for the upstream repos
-under evaluation for future vendoring, and `docs/FUTURE_INTEREST.md` for open ideas not yet ready
-for that process.
+`docs/metadata-schema.md` for the metadata fields. `metadata.yaml`'s `algorithm_dependencies`
+field (e.g. both linear solvers depend on `hadamard-test`) is checked against the real catalogue
+by `tests/test_repo_structure.py`, so a dangling or typo'd reference fails structurally, not
+silently. See `docs/SOURCES.md` for the upstream repos under evaluation for future vendoring,
+`docs/FUTURE_INTEREST.md` for open ideas not yet ready for that process, and
+`docs/private-dependencies.md` for how the two linear-solver wrappers' private dependencies are
+kept out of the default public CI matrix.

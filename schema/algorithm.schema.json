@@ -53,6 +53,26 @@
     },
     "known_limitations": { "type": "array", "items": { "type": "string" } },
     "improvement_opportunities": { "type": "array", "items": { "type": "string" } },
+    "algorithm_dependencies": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "ids of other library-core algorithms this one conceptually builds on (e.g. a linear solver depending on hadamard-test). Checked by tests/test_repo_structure.py against the actual catalogue, not just documentation."
+    },
+    "external_dependencies": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["package", "url", "access"],
+        "properties": {
+          "package": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "access": { "type": "string", "enum": ["public", "private"] },
+          "license": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      },
+      "description": "Non-library-core packages the implementation imports at runtime (as opposed to `source`, which describes where this algorithm's own pattern/code came from)."
+    },
     "benchmarks": {
       "type": "array",
       "items": {

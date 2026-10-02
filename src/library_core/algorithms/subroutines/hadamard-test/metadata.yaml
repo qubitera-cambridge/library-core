@@ -1,0 +1,47 @@
+id: hadamard-test
+name: "Hadamard Test"
+aliases:
+  - "Overlap estimation test"
+category: subroutines
+problem_class: "Estimate the real or imaginary part of <psi|U|psi> for a unitary U and state |psi>, using one ancilla qubit"
+problem_tags:
+  - interference
+  - overlap-estimation
+  - subroutine
+  - amplitude-estimation
+classical_complexity: "N/A — estimating a circuit overlap given only black-box access is not classically efficient in general"
+quantum_complexity: "O(1) extra ancilla qubit and one controlled-U application per shot; O(1/epsilon^2) shots for precision epsilon"
+speedup: exponential
+qubits_required: "n+1 qubits, where U acts on n qubits (1 ancilla + n system)"
+circuit_depth: "O(depth of controlled-U)"
+requires_fault_tolerance: false
+hardware_assumptions: "NISQ-viable; a standard calibration/estimation primitive run on real quantum hardware today"
+maturity: textbook
+implementations:
+  - language: python
+    framework: qiskit
+    path: qiskit_impl.py
+    status: verified-simulator
+source:
+  repo: Qiskit/qiskit (textbook/tutorial pattern, reimplemented against current API)
+  url: https://github.com/Qiskit/qiskit
+  commit: "n/a - pattern-level adaptation, not a direct file copy"
+  license: Apache-2.0
+known_limitations:
+  - "Demonstrated only with a single-qubit controlled-U (Rz); the construction generalizes to any controlled unitary but larger U means a deeper controlled circuit"
+  - "No error mitigation; estimate variance grows with shot noise and real-hardware gate error"
+improvement_opportunities:
+  - "Add a worked multi-qubit example (e.g. estimating an overlap relevant to a specific Hamiltonian term)"
+  - "This is the core primitive quantum-krylov-solver and df-vqls-solver both build on internally — a natural next step is cross-linking their documentation pages once library-ui supports rendering algorithm_dependencies"
+algorithm_dependencies: []
+benchmarks:
+  - metric: max_abs_error
+    value: 0.01
+    unit: probability
+    conditions: "theta in {0, 60, 120, 180} degrees, 4000 shots, AerSimulator"
+    hardware: "AerSimulator (noiseless)"
+    date: "2026-10-02"
+references:
+  - "Nielsen & Chuang, Quantum Computation and Quantum Information, Section 1.4.5 / 7.6"
+  - "Aharonov, Jones, Landau (2009). A polynomial quantum algorithm for approximating the Jones polynomial, which popularized this primitive."
+last_reviewed: "2026-10-02"

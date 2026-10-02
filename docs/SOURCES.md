@@ -7,6 +7,10 @@ Sources that are just an open idea — not yet license-checked, possibly not eve
 current taxonomy — belong in `docs/FUTURE_INTEREST.md` instead, until they're ready to actually
 move through the vendoring process below.
 
+`quantum-krylov-solver` and `df-vqls-solver` depend on sibling `qubitera-cambridge` projects
+(`quantum-krylov-core`, `df-vqls-core`), not third-party sources — they don't belong in this
+ledger. See `docs/private-dependencies.md` instead.
+
 | Source | URL | License | Notes | Status |
 |---|---|---|---|---|
 | Qiskit | https://github.com/Qiskit/qiskit | Apache-2.0 | Core SDK; algorithm textbook/tutorials live in separate repos (qiskit-community-tutorials, etc.) | Grover's algorithm, Quantum Phase Estimation, and Trotterized TFIM simulation vendored (pattern-level, see each algorithm's `PROVENANCE.md`) |
