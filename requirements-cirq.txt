@@ -1,0 +1,4 @@
+# No Cirq algorithm exists in this repo yet — this file and the `cirq` tox
+# environment exist so the multi-SDK environment mechanism is real and tested
+# (see tox.ini) before the first Cirq algorithm actually lands, not after.
+cirq>=1.4

@@ -11,7 +11,13 @@ import math
 from pathlib import Path
 
 import pytest
-from qiskit.quantum_info import Statevector
+
+# Lets this file report as cleanly skipped (not a collection error) under a
+# tox environment that doesn't have qiskit installed (e.g. the `cirq` env) —
+# see docs/testing.md's multi-SDK environment section.
+pytest.importorskip("qiskit")
+
+from qiskit.quantum_info import Statevector  # noqa: E402
 
 # Load the sibling implementation module by explicit path rather than a plain
 # `import qiskit_impl` — many algorithms across this repo will name their main

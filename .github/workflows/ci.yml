@@ -7,10 +7,23 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # One job per tox environment (= per framework), so an algorithm in
+        # one SDK never depends on another SDK being installed, and a broken
+        # dependency in one framework doesn't fail unrelated ones. Pin the
+        # Python version per entry if a framework ever needs it (e.g. Classiq
+        # currently caps Requires-Python <3.14) — default is fine until then.
+        include:
+          - env: qiskit
+            python-version: "3.12"
+          - env: cirq
+            python-version: "3.12"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - run: pip install -r requirements-dev.txt
-      - run: python3 -m pytest
+          python-version: ${{ matrix.python-version }}
+      - run: pip install tox
+      - run: tox -e ${{ matrix.env }}
