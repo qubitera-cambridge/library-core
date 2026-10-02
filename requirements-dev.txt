@@ -1,0 +1,10 @@
+pytest>=8
+pyyaml>=6
+jsonschema>=4
+pre-commit>=3
+
+# Framework-specific deps accumulate here as algorithms are added across
+# different SDKs; keep them optional/grouped if this grows (e.g. split into
+# requirements-qiskit.txt, requirements-cirq.txt) once it's unwieldy.
+qiskit>=2
+qiskit-aer>=0.15

@@ -1,0 +1,8 @@
+[tool.pytest.ini_options]
+testpaths = ["tests", "algorithms"]
+python_files = ["test_*.py"]
+# Required once multiple algorithms have same-named test/impl files (e.g. every
+# Qiskit algorithm's test file is test_qiskit_impl.py) with no __init__.py in
+# each directory — importlib mode avoids pytest's classic "import file mismatch"
+# collision on duplicate basenames across directories.
+addopts = "--import-mode=importlib"
