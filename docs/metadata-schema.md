@@ -1,6 +1,6 @@
 # Algorithm metadata schema
 
-Every algorithm directory under `algorithms/**/<algorithm-slug>/` carries a `metadata.yaml`
+Every algorithm directory under `src/library_core/algorithms/**/<algorithm-slug>/` carries a `metadata.yaml`
 alongside its `PROVENANCE.md`. This is the structured layer an AI traverses first to shortlist
 candidates for a problem, before reading any actual code. JSON Schema for validation lives at
 `schema/algorithm.schema.json`.
@@ -12,7 +12,7 @@ candidates for a problem, before reading any actual code. JSON Schema for valida
 | `id` | string | Unique slug, matches directory name |
 | `name` | string | Canonical name, e.g. "Shor's Algorithm" |
 | `aliases` | list[string] | Other names it's known by |
-| `category` | string | Matches top-level `algorithms/` taxonomy directory |
+| `category` | string | Matches top-level taxonomy directory under `src/library_core/algorithms/` |
 | `problem_class` | string | One-sentence description of the problem it solves |
 | `problem_tags` | list[string] | Free tags for search/filtering, e.g. `factoring`, `search`, `optimization`, `linear-algebra`, `simulation`, `cryptanalysis`, `graph` |
 | `classical_complexity` | string | Best known classical complexity for the same problem |
@@ -23,7 +23,7 @@ candidates for a problem, before reading any actual code. JSON Schema for valida
 | `requires_fault_tolerance` | boolean | Whether it needs error-corrected hardware to be useful at scale |
 | `hardware_assumptions` | string | e.g. "NISQ-viable", "requires logical qubits ~10^6 physical", "simulator only" |
 | `maturity` | enum | `textbook` \| `demonstrated` (run on real hardware) \| `research` \| `experimental` |
-| `implementations` | list[object] | `{language, framework, path, status}` — one entry per implementation variant in this repo |
+| `implementations` | list[object] | `{language, framework, path, status}` — one entry per implementation variant. `path` is just the filename (e.g. `qiskit_impl.py`), relative to the algorithm's own directory — not repo-root-relative — since that's what `library_core.catalogue` resolves it against |
 | `source` | object | `{repo, url, commit, license}` — provenance of the original code this was copied from |
 | `known_limitations` | list[string] | Known weaknesses, failure modes, or caveats |
 | `improvement_opportunities` | list[string] | Open ideas for optimization — this is the field an "improve this algorithm" agent reads/writes to |

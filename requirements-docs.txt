@@ -1,7 +1,0 @@
-# Needed only to RENDER the already-generated site (scripts/render_docs.py +
-# mkdocs build) — no quantum SDK belongs here. Demo generation (which does
-# need an SDK) is a separate step; see docs/site-generation.md.
-jinja2>=3
-pyyaml>=6
-mkdocs>=1.6
-mkdocs-material>=9

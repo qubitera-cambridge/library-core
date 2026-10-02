@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-ALGORITHMS_DIR = REPO_ROOT / "algorithms"
+ALGORITHMS_DIR = REPO_ROOT / "src" / "library_core" / "algorithms"
 
 
 def changed_algorithm_dirs(changed_paths):

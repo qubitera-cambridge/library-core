@@ -6,7 +6,7 @@ repos:
         entry: scripts/run_changed_algorithm_tests.py
         language: script
         pass_filenames: true
-        files: ^(algorithms/|schema/|tests/)
+        files: ^(src/|schema/|tests/)
         # Without this, pre-commit's staged-file matcher excludes pure deletions
         # from the files a `files:` regex hook ever sees — so deleting e.g. an
         # algorithm's metadata.yaml or test file, with nothing else staged, would

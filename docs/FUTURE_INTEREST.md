@@ -12,7 +12,7 @@ Once an entry's blocking question is resolved and it's worth seriously evaluatin
 
 - **[lambeq](https://github.com/quantinuum/lambeq)** (Quantinuum) — QNLP framework (DisCoCat-based
   circuit construction + training), Apache-2.0. Not a named algorithm with a proven
-  complexity-theoretic speedup, so it doesn't fit the current `algorithms/` taxonomy or the
+  complexity-theoretic speedup, so it doesn't fit the current `src/library_core/algorithms/` taxonomy or the
   exact-statevector testing pattern in `docs/testing.md` (which assumes deterministic, reversible
   circuits). Blocked on: deciding whether QuAlgLib's scope extends to heuristic/variational
   frameworks, and if so, what category (e.g. `quantum-nlp`) and testing approach

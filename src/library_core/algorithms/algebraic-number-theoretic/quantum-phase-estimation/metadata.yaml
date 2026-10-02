@@ -21,7 +21,7 @@ maturity: textbook
 implementations:
   - language: python
     framework: qiskit
-    path: algorithms/algebraic-number-theoretic/quantum-phase-estimation/qiskit_impl.py
+    path: qiskit_impl.py
     status: verified-simulator
 source:
   repo: Qiskit/qiskit (textbook/tutorial pattern, reimplemented against current API)

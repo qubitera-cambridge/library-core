@@ -21,7 +21,7 @@ maturity: textbook
 implementations:
   - language: python
     framework: qiskit
-    path: algorithms/simulation/trotterized-tfim/qiskit_impl.py
+    path: qiskit_impl.py
     status: verified-simulator
 source:
   repo: Qiskit/qiskit (tutorial pattern for Trotterized Hamiltonian simulation, reimplemented)

@@ -1,9 +1,13 @@
 # Testing architecture
 
+This is library-core's testing architecture — the algorithm library itself. The documentation
+site (built from library-core as a dependency) lives in the separate `library-ui` repo and has
+its own build/test setup; see that repo's docs, not this file, for how it works.
+
 ## Principles
 
-- **Tests live with their algorithm.** Each `algorithms/<category>/<algo>/` directory owns its
-  own `test_*.py` alongside its implementation — no central test tree duplicating that structure.
+- **Tests live with their algorithm.** Each `src/library_core/algorithms/<category>/<algo>/`
+  directory owns its own `test_*.py` alongside its implementation — no central test tree duplicating that structure.
   This keeps an algorithm's correctness self-contained and makes it obvious when one is untested.
 - **Prefer exact statevector assertions over sampled ones.** Quantum circuits are probabilistic
   at measurement, but their statevector (pre-measurement) is deterministic. Asserting on
@@ -33,14 +37,14 @@ breaking test collection:
    `"grovers_algorithm.qiskit_impl"`) is just a label, not what's doing the work. (A plain
    `import qiskit_impl`, by contrast, genuinely would collide through `sys.modules` once more than
    one same-named module is imported in the same session — that's the failure mode this pattern
-   avoids.) Copy this pattern (see `algorithms/oracular/grovers-algorithm/test_qiskit_impl.py`)
+   avoids.) Copy this pattern (see `src/library_core/algorithms/oracular/grovers-algorithm/test_qiskit_impl.py`)
    for every new algorithm's tests.
 3. A missing optional SDK must not take down the whole suite. `pyproject.toml` sets
    `--continue-on-collection-errors` so one algorithm's test file failing to import (e.g. a Cirq
    algorithm's test when Cirq isn't installed) doesn't abort every other test in the same `pytest`
    invocation — but the failing file still reports as a collection *error*, not a clean skip. Every
    framework-specific test file must call `pytest.importorskip("<package>")` before importing that
-   SDK (see `algorithms/oracular/grovers-algorithm/test_qiskit_impl.py`'s
+   SDK (see `src/library_core/algorithms/oracular/grovers-algorithm/test_qiskit_impl.py`'s
    `pytest.importorskip("qiskit")`), so it reports as skipped instead when run under a different
    framework's environment (see "Multi-SDK environments" below — this is what actually happens
    every time `tox -e cirq` runs and encounters Grover's Qiskit-only test).
@@ -62,10 +66,10 @@ tox -e qiskit
 tox -e cirq
 
 # Scope to specific changed directories, same as a plain pytest invocation
-tox -e qiskit -- algorithms/oracular/grovers-algorithm -q
+tox -e qiskit -- src/library_core/algorithms/oracular/grovers-algorithm -q
 ```
 
-Each environment runs the *entire* `algorithms/` tree, not just that framework's algorithms —
+Each environment runs the *entire* `src/library_core/algorithms/` tree, not just that framework's algorithms —
 thanks to the `pytest.importorskip` convention above, another framework's tests just report as
 skipped rather than failing, so `tox -e cirq` against today's one-Qiskit-algorithm repo reports
 "8 passed, 1 skipped," not an error.
@@ -97,7 +101,7 @@ python3 -m pytest -m "not slow"
 python3 -m pytest tests/test_repo_structure.py
 
 # Just one algorithm
-python3 -m pytest algorithms/oracular/grovers-algorithm/
+python3 -m pytest src/library_core/algorithms/oracular/grovers-algorithm/
 ```
 
 Mark any sampled/simulator-backed test (not exact-statevector) with `@pytest.mark.slow` — see
@@ -118,8 +122,10 @@ the original version), which:
    resolves each to its framework(s) via `metadata.yaml`, and routes to the matching `tox -e
    <framework>` — not the full simulator-backed suite across every framework — so commits stay
    fast as the collection grows into the hundreds or thousands of algorithms across multiple SDKs.
-3. Regenerates the documentation site, scoped and cached the same way — see
-   `docs/site-generation.md`'s "Wired into the pre-commit hook" for the details.
+
+This repo only runs tests — it has no opinion on documentation. `library-ui` (a separate repo that
+depends on this one via `pip install library-core`) has its own build/hook for the documentation
+site.
 
 Setup:
 
@@ -147,10 +153,8 @@ with zero verification under this fallback.
 ## CI
 
 `.github/workflows/ci.yml` runs a matrix job, one per tox environment/framework (`tox -e qiskit`,
-`tox -e cirq`, ...), plus a separate `docs` job that does a full (uncached) regeneration and build
-of the documentation site, on every push and pull request — so a dependency problem in one
-framework can't fail CI for algorithms in another, and a broken template or demo can't land even
-if the pre-commit hook was bypassed. **The local pre-commit hook is a fast first line of
+`tox -e cirq`, ...), on every push and pull request — so a dependency problem in one framework
+can't fail CI for algorithms in another. **The local pre-commit hook is a fast first line of
 defense, not the enforcement mechanism** — it's opt-in per clone (nothing runs it until someone
 runs `pre-commit install`), and `git commit --no-verify` bypasses it trivially. CI is what actually
 guarantees a merged change was checked. Once this repo has a remote with multiple contributors,

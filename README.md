@@ -1,8 +1,10 @@
-# QuAlgLib (qubitera)
+# library-core
 
-A single repository bringing together quantum algorithm implementations curated from across the
-ecosystem — Qiskit, Classiq's `classiq-library`, academic repos, and other sources — organized by
-algorithm family rather than by source project.
+The quantum algorithm library at the heart of QuAlgLib — implementations curated from across the
+ecosystem (Qiskit, Classiq's `classiq-library`, academic repos, and other sources), organized by
+algorithm family rather than by source project, and exposed as an installable Python package so
+other projects (the `library-ui` documentation site, [Delphi](https://github.com/qubitera-cambridge/delphi))
+can depend on it directly.
 
 ## Why this exists
 
@@ -12,15 +14,24 @@ own dependency stack and license. This repo re-homes individual algorithm implem
 [quantumalgorithmzoo.org](https://quantumalgorithmzoo.org/) categorizes algorithms, with
 per-file/per-directory provenance and license tracking so nothing's attribution gets lost.
 
+This repo is the library itself — correctness, metadata, provenance, licensing. It deliberately
+does *not* contain the documentation site (that's [`library-ui`](https://github.com/qubitera-cambridge/library-ui),
+which depends on this repo via `pip install library-core`) or anything Delphi-specific. Splitting
+these out means neither consumer pulls in dependencies it doesn't need — Delphi gets a lightweight
+algorithm catalogue with no MkDocs/Jinja2 in its dependency tree, and the docs site never needs
+whatever Delphi-specific machinery might come later.
+
 ## Structure
 
 ```
-algorithms/
-  algebraic-number-theoretic/   # Shor's, hidden subgroup problem, discrete log, ...
-  oracular/                     # Grover's, Deutsch-Jozsa, Simon's, ...
-  optimization-approximation/   # QAOA, VQE, ...
-  simulation/                   # Hamiltonian simulation, ...
-  ...
+src/library_core/
+  __init__.py, catalogue.py     # Public API: list_algorithms(), load_implementation(), run_demo(), ...
+  algorithms/
+    algebraic-number-theoretic/   # Shor's, hidden subgroup problem, discrete log, ...
+    oracular/                     # Grover's, Deutsch-Jozsa, Simon's, ...
+    optimization-approximation/   # QAOA, VQE, ...
+    simulation/                   # Hamiltonian simulation, ...
+    ...
 docs/
   SOURCES.md                    # Ledger of upstream repos considered and their license status
 NOTICE                          # Aggregated third-party attributions
@@ -30,22 +41,34 @@ LICENSE                         # License for original/glue code in this repo
 Each algorithm directory carries its own `PROVENANCE.md` noting: source repo, commit/version it was
 pulled from, original license, and any modifications made.
 
+## Using this as a dependency
+
+```bash
+pip install git+https://github.com/qubitera-cambridge/library-core.git
+```
+
+```python
+import library_core
+
+for algo in library_core.list_algorithms():
+    print(algo["id"], algo["category"], algo["problem_class"])
+
+result = library_core.run_demo("grovers-algorithm", "qiskit")
+```
+
+See `src/library_core/catalogue.py` for the full API (`list_algorithms`, `get_algorithm`,
+`get_explanation`, `get_provenance`, `load_implementation`, `run_demo`).
+
 ## Status
 
 Three algorithms vendored so far, all pattern-level reimplementations from Qiskit:
 
-- `algorithms/oracular/grovers-algorithm/` — Grover's search
-- `algorithms/algebraic-number-theoretic/quantum-phase-estimation/` — Quantum Phase Estimation
-- `algorithms/simulation/trotterized-tfim/` — Trotterized Hamiltonian simulation (TFIM)
+- `src/library_core/algorithms/oracular/grovers-algorithm/` — Grover's search
+- `src/library_core/algorithms/algebraic-number-theoretic/quantum-phase-estimation/` — Quantum Phase Estimation
+- `src/library_core/algorithms/simulation/trotterized-tfim/` — Trotterized Hamiltonian simulation (TFIM)
 
 Each has a `metadata.yaml` (schema at `schema/algorithm.schema.json`), a `PROVENANCE.md`, and a
 colocated test suite — see `docs/testing.md` for the testing architecture and
 `docs/metadata-schema.md` for the metadata fields. See `docs/SOURCES.md` for the upstream repos
 under evaluation for future vendoring, and `docs/FUTURE_INTEREST.md` for open ideas not yet ready
 for that process.
-
-## Documentation site
-
-A browsable site (explanations, metadata, and live demo output) is generated directly from each
-algorithm's files — see `docs/site-generation.md` for how it works and
-`tox -e qiskit-docs && tox -e docs` to build it locally.

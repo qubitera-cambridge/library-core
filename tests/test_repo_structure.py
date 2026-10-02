@@ -19,7 +19,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCHEMA_PATH = REPO_ROOT / "schema" / "algorithm.schema.json"
-ALGORITHMS_DIR = REPO_ROOT / "algorithms"
+ALGORITHMS_DIR = REPO_ROOT / "src" / "library_core" / "algorithms"
 STALE_AFTER_DAYS = 365
 
 
@@ -80,10 +80,12 @@ def test_provenance_file_exists(algo_dir):
 
 @pytest.mark.parametrize("algo_dir", ALGO_DIRS, ids=lambda p: str(p.relative_to(REPO_ROOT)))
 def test_implementation_paths_exist(algo_dir):
+    """`path` is relative to the algorithm's own directory (algo_dir), not
+    repo-root — see docs/metadata-schema.md."""
     with open(algo_dir / "metadata.yaml") as f:
         data = yaml.safe_load(f)
     for impl in data.get("implementations", []):
-        impl_path = REPO_ROOT / impl["path"]
+        impl_path = algo_dir / impl["path"]
         assert impl_path.exists(), f"metadata.yaml references missing file: {impl['path']}"
 
 

@@ -1,5 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "library-core"
+version = "0.1.0"
+description = "QuAlgLib's quantum algorithm library: implementations, metadata, and a catalogue API for consumers like library-ui and Delphi"
+requires-python = ">=3.10"
+dependencies = [
+    "pyyaml>=6",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/library_core"]
+
 [tool.pytest.ini_options]
-testpaths = ["tests", "algorithms"]
+testpaths = ["tests", "src"]
 python_files = ["test_*.py"]
 # --import-mode=importlib: required once multiple algorithms have same-named
 # test/impl files (e.g. every Qiskit algorithm's test file is

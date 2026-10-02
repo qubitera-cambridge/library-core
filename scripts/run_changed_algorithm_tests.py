@@ -2,20 +2,16 @@
 """Pre-commit hook entrypoint.
 
 Always runs the cheap repo structure/schema check, then for each changed
-algorithm directory, routed by framework (metadata.yaml's
-implementations[].framework) so no contributor or CI job ever needs every
-quantum SDK installed in one shared environment:
+algorithm directory, routes tests to the tox environment matching that
+algorithm's framework (metadata.yaml's implementations[].framework), scoped to
+just the changed directories — so no contributor or CI job ever needs every
+quantum SDK installed in one shared environment, and commits stay fast as the
+collection grows into the hundreds or thousands of algorithms.
 
-  1. Runs that framework's tests, scoped to just the changed directories.
-  2. Regenerates just those directories' demo() cache entries (Stage 1 of the
-     docs site build — see docs/site-generation.md). website/demo_cache/ is
-     gitignored but persists on disk across commits, so this only recomputes
-     what actually changed rather than every algorithm's demo every time.
-
-Finally, if everything above succeeded, re-renders and rebuilds the full docs
-site (Stage 2 — framework-agnostic, needs no quantum SDK, cheap pure
-templating) so a commit can never land with a broken template or a site that
-fails to build.
+This repo (library-core) only concerns itself with correctness — the
+documentation site build (which consumes library-core as an installed
+dependency) lives in the separate library-ui repo and isn't triggered from
+here. See docs/site-generation.md.
 
 Rewritten from a bash script into Python after an adversarial review found
 three separate bash-specific bugs here (unquoted word-splitting, set -e
@@ -62,7 +58,7 @@ def main(argv):
 
     dirs = changed_algorithm_dirs(argv)
     if not dirs:
-        print("No algorithm directories changed; skipping per-algorithm tests and docs.", flush=True)
+        print("No algorithm directories changed; skipping per-algorithm tests.", flush=True)
         return 0
 
     dirs_by_framework = defaultdict(list)
@@ -99,20 +95,7 @@ def main(argv):
             # across a couple of commits). Don't hard-block the commit for it.
             print(f"warning: no tests found yet for the changed '{framework}' director(y/ies) above")
             rc = 0
-        if rc != 0:
-            overall_rc = overall_rc or rc
-            continue  # don't bother regenerating docs for a framework whose tests just failed
-
-        print(f"Regenerating '{framework}' demo cache for: {', '.join(rel_dirs)}", flush=True)
-        demo_result = subprocess.run(
-            ["tox", "-e", f"{framework}-docs", "--", *rel_dirs], cwd=REPO_ROOT
-        )
-        overall_rc = overall_rc or demo_result.returncode
-
-    if overall_rc == 0:
-        print("Rendering documentation site...", flush=True)
-        site_result = subprocess.run(["tox", "-e", "docs"], cwd=REPO_ROOT)
-        overall_rc = overall_rc or site_result.returncode
+        overall_rc = overall_rc or rc
 
     return overall_rc
 

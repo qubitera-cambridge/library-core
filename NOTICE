@@ -1,4 +1,4 @@
-QuAlgLib (qubitera)
+library-core (QuAlgLib)
 Copyright 2026 Henry
 
 This repository aggregates quantum algorithm implementations from multiple upstream sources.

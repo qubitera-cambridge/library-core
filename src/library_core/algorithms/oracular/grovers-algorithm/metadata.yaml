@@ -21,7 +21,7 @@ maturity: demonstrated
 implementations:
   - language: python
     framework: qiskit
-    path: algorithms/oracular/grovers-algorithm/qiskit_impl.py
+    path: qiskit_impl.py
     status: verified-simulator
 source:
   repo: Qiskit/qiskit (tutorials/textbook pattern, reimplemented against current API)

@@ -19,7 +19,7 @@ maturity: textbook
 implementations:
   - language: python
     framework: qiskit
-    path: algorithms/algebraic-number-theoretic/shors-algorithm/qiskit_impl.py
+    path: qiskit_impl.py
     status: demonstrated-small-scale
 source:
   repo: Qiskit/qiskit
