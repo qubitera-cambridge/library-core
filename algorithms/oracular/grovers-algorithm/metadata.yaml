@@ -1,0 +1,51 @@
+id: grovers-algorithm
+name: "Grover's Algorithm"
+aliases:
+  - "Grover's search"
+  - "Quantum amplitude amplification search"
+category: oracular
+problem_class: "Unstructured search: find marked item(s) among N = 2^n possibilities given a black-box oracle"
+problem_tags:
+  - search
+  - amplitude-amplification
+  - oracle
+  - unstructured-search
+classical_complexity: "O(N) oracle queries (exhaustive search)"
+quantum_complexity: "O(sqrt(N / M)) oracle queries, where M is the number of marked items"
+speedup: quadratic
+qubits_required: "n qubits for N = 2^n item search space; no ancilla needed with a symmetric multi-controlled-Z phase oracle"
+circuit_depth: "O(sqrt(N/M)) Grover iterations, each O(n) depth for the oracle + diffusion"
+requires_fault_tolerance: false
+hardware_assumptions: "NISQ-viable for small n; iteration count and multi-controlled gates grow circuit depth so noise limits practical n on current hardware"
+maturity: demonstrated
+implementations:
+  - language: python
+    framework: qiskit
+    path: algorithms/oracular/grovers-algorithm/qiskit_impl.py
+    status: verified-simulator
+source:
+  repo: Qiskit/qiskit (tutorials/textbook pattern, reimplemented against current API)
+  url: https://github.com/Qiskit/qiskit
+  commit: "n/a - pattern-level adaptation, not a direct file copy"
+  license: Apache-2.0
+known_limitations:
+  - "Multi-controlled-Z oracle via MCMTGate decomposes to a deep circuit for large n; not resource-optimal"
+  - "Exact optimal iteration count requires knowing M (number of marked states) in advance; unknown-M variants (e.g. quantum counting) are not implemented here"
+  - "No error mitigation; success rate will degrade sharply on real hardware beyond ~5-6 qubits without it"
+improvement_opportunities:
+  - "Implement quantum counting (QFT-based) as a preprocessing step to estimate M when it's unknown, making this usable for true 'find if anything matches' problems"
+  - "Add an ancilla-based phase-kickback oracle variant and benchmark circuit depth/qubit tradeoff against the current ancilla-free MCMT-Z version"
+  - "Decompose the multi-controlled-Z with a more hardware-efficient construction (e.g. relative-phase Toffoli chains) for better NISQ performance at larger n"
+benchmarks:
+  - metric: success_rate
+    value: "100% (n=3, 2 marked of 8, 1 iteration, AerSimulator, 2000 shots)"
+    hardware: "AerSimulator (noiseless)"
+    date: "2026-10-02"
+  - metric: success_rate
+    value: "95-100% across n=3..5 at optimal iteration counts"
+    hardware: "AerSimulator (noiseless)"
+    date: "2026-10-02"
+references:
+  - "Grover, L.K. (1996). A fast quantum mechanical algorithm for database search. STOC '96."
+  - "Nielsen & Chuang, Quantum Computation and Quantum Information, Ch. 6"
+last_reviewed: "2026-10-02"
