@@ -1,0 +1,55 @@
+id: trotterized-tfim
+name: "Trotterized Transverse-Field Ising Model Simulation"
+aliases:
+  - "TFIM Trotter simulation"
+  - "Trotter-Suzuki Hamiltonian simulation"
+category: simulation
+problem_class: "Simulate time evolution exp(-i*H*t) of the Transverse-Field Ising Model H = -J*sum(Z_i Z_{i+1}) - h*sum(X_i) on a spin chain"
+problem_tags:
+  - hamiltonian-simulation
+  - trotter-suzuki
+  - spin-chain
+  - condensed-matter
+classical_complexity: "O(2^n) via dense matrix exponentiation — intractable beyond a few dozen spins; this is the canonical motivating problem for quantum simulation"
+quantum_complexity: "O(n * steps) two-qubit gates for first-order Trotterization; steps required for a given accuracy grows with simulation time and desired precision"
+speedup: exponential
+qubits_required: "n qubits for an n-spin chain"
+circuit_depth: "O(n * steps) — each Trotter step applies O(n) two-qubit ZZ gates plus O(n) single-qubit X-field gates"
+requires_fault_tolerance: false
+hardware_assumptions: "NISQ-viable for small n and modest step counts; Trotter error vs. circuit depth (and therefore noise) is the central practical tradeoff — more steps improve accuracy but accumulate more gate error"
+maturity: textbook
+implementations:
+  - language: python
+    framework: qiskit
+    path: algorithms/simulation/trotterized-tfim/qiskit_impl.py
+    status: verified-simulator
+source:
+  repo: Qiskit/qiskit (tutorial pattern for Trotterized Hamiltonian simulation, reimplemented)
+  url: https://github.com/Qiskit/qiskit
+  commit: "n/a - pattern-level adaptation, not a direct file copy"
+  license: Apache-2.0
+known_limitations:
+  - "First-order Trotter-Suzuki only; higher-order (e.g. second-order symmetric) decompositions converge faster per gate but aren't implemented here"
+  - "Open boundary chain only (no periodic wraparound ZZ coupling between the last and first spin)"
+  - "No error mitigation; real-hardware accuracy depends heavily on two-qubit gate fidelity since circuit depth scales directly with step count"
+improvement_opportunities:
+  - "Implement second-order (symmetric) Trotter-Suzuki splitting and compare fidelity-per-gate against the current first-order version — this is a concrete, directly comparable benchmark since both can be checked against the same exact matrix-exponential reference"
+  - "Add periodic boundary conditions (ring topology) as a variant"
+  - "Extend benchmarks to track fidelity vs. circuit depth tradeoff explicitly, once metadata.yaml's benchmarks schema supports recording a series rather than single points"
+benchmarks:
+  - metric: fidelity_vs_exact_evolution
+    value: 0.999969
+    unit: fraction
+    conditions: "3-spin chain, J=1.0, h=0.5, t=1.0, 100 first-order Trotter steps, vs. exact matrix-exponential reference"
+    hardware: "exact statevector (no simulator noise)"
+    date: "2026-10-02"
+  - metric: fidelity_vs_exact_evolution
+    value: 0.910033
+    unit: fraction
+    conditions: "same system, 2 first-order Trotter steps — included to show convergence behavior alongside the 100-step entry"
+    hardware: "exact statevector (no simulator noise)"
+    date: "2026-10-02"
+references:
+  - "Lloyd, S. (1996). Universal Quantum Simulators. Science."
+  - "Nielsen & Chuang, Quantum Computation and Quantum Information, Section 4.7"
+last_reviewed: "2026-10-02"

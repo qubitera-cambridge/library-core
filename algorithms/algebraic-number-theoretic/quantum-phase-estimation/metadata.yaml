@@ -1,0 +1,49 @@
+id: quantum-phase-estimation
+name: "Quantum Phase Estimation"
+aliases:
+  - "QPE"
+  - "Phase estimation algorithm"
+category: algebraic-number-theoretic
+problem_class: "Given a unitary U and an eigenstate |psi> of U, estimate the phase theta in U|psi> = e^{2*pi*i*theta}|psi> to n bits of precision"
+problem_tags:
+  - phase-estimation
+  - quantum-fourier-transform
+  - eigenvalue-estimation
+  - subroutine
+classical_complexity: "N/A — estimating an eigenphase of a unitary given only black-box access is not classically efficient in general"
+quantum_complexity: "O(n^2) gates for n bits of precision (dominated by the inverse QFT), using O(n) controlled-U^(2^k) applications"
+speedup: exponential
+qubits_required: "n counting qubits for n bits of precision, plus however many qubits the eigenstate |psi> needs (1 in this minimal demo)"
+circuit_depth: "O(n^2) from the inverse QFT, plus n controlled-unitary applications (each of whatever depth controlled-U costs)"
+requires_fault_tolerance: false
+hardware_assumptions: "NISQ-viable for small n; the core subroutine behind Shor's algorithm and quantum chemistry eigenvalue estimation, so real use at large n assumes fault-tolerant hardware"
+maturity: textbook
+implementations:
+  - language: python
+    framework: qiskit
+    path: algorithms/algebraic-number-theoretic/quantum-phase-estimation/qiskit_impl.py
+    status: verified-simulator
+source:
+  repo: Qiskit/qiskit (textbook/tutorial pattern, reimplemented against current API)
+  url: https://github.com/Qiskit/qiskit
+  commit: "n/a - pattern-level adaptation, not a direct file copy"
+  license: Apache-2.0
+known_limitations:
+  - "Demonstrated only on a trivial single-qubit phase gate with a known eigenstate (|1>); doesn't show how to prepare an unknown eigenstate, which is the hard part in real applications (e.g. Shor's uses a clever trick to avoid needing one)"
+  - "Uses the textbook QFT-based construction; iterative/semiclassical QPE (measure-and-feed-forward one counting qubit at a time) uses only 1 ancilla qubit instead of n, at the cost of requiring mid-circuit measurement and classical feedback — not implemented here"
+  - "No error mitigation; the inverse QFT's many controlled-phase gates make this sensitive to noise well before n gets large on real hardware"
+improvement_opportunities:
+  - "Implement iterative/semiclassical QPE (1 ancilla + mid-circuit measurement) alongside this version, once the repo's testing architecture has a documented pattern for mid-circuit-measurement algorithms (currently an open gap — see docs/testing.md)"
+  - "Extend the demo to a genuinely non-trivial unitary (e.g. a 2x2 or 4x4 unitary with an eigenstate that itself needs state preparation) rather than the single-qubit phase-gate special case"
+  - "This is the core subroutine Shor's algorithm uses for order-finding — a natural next addition to this repo is Shor's algorithm itself, reusing this QPE construction"
+benchmarks:
+  - metric: success_probability
+    value: 1.0
+    unit: fraction
+    conditions: "n=3 counting qubits, theta exactly representable (e.g. 3/8), exact statevector"
+    hardware: "exact statevector (no simulator noise)"
+    date: "2026-10-02"
+references:
+  - "Kitaev, A. (1995). Quantum measurements and the Abelian Stabilizer Problem."
+  - "Nielsen & Chuang, Quantum Computation and Quantum Information, Section 5.2"
+last_reviewed: "2026-10-02"

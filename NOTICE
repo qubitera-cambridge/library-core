@@ -5,4 +5,9 @@ This repository aggregates quantum algorithm implementations from multiple upstr
 Original authorship and license for each vendored algorithm is preserved in that algorithm's
 directory (see PROVENANCE.md alongside it) and summarized here as sources are added.
 
-No third-party code has been vendored yet. See docs/SOURCES.md for the sources under evaluation.
+Vendored sources (see each algorithm's PROVENANCE.md for full detail):
+
+- Qiskit (https://github.com/Qiskit/qiskit), Apache-2.0 — pattern-level reimplementations of
+  Grover's algorithm, Quantum Phase Estimation, and Trotterized TFIM simulation.
+
+See docs/SOURCES.md for the full source ledger, including sources under evaluation.
