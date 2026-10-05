@@ -6,6 +6,7 @@ from .catalogue import (
     load_implementation,
     run_demo,
 )
+from .graph import build_dependency_graph
 
 __all__ = [
     "list_algorithms",
@@ -14,4 +15,5 @@ __all__ = [
     "get_provenance",
     "load_implementation",
     "run_demo",
+    "build_dependency_graph",
 ]
